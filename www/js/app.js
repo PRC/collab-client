@@ -18,6 +18,28 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       // org.apache.cordova.statusbar required
       StatusBar.styleLightContent();
     }
+
+    //test to see can play with pouchdb
+    console.log('pouchDB constructor', PouchDB)
+    var db = new PouchDB('decisions-jakamama', {adapter : 'websql'});
+    console.log('have local db', db);
+    // var remotedb = new PouchDB('http://localhost:3000/decisions-jakamama');//local node CORS problems
+    var remotedb = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+    // var remotedb = new PouchDB('http://localhost:5984/decisions-jakamama');//remote working
+    console.log('have remoteDB', remotedb);
+
+
+    db.sync(remotedb).on('complete', function () {
+      // yay, we're in sync!
+      console.log('in sync')
+      // db.get('1').then(function(doc){
+      //   console.log('doc', doc);
+      // })
+    }).on('error', function (err) {
+      console.log('error', err)
+      // boo, we hit an error!
+    });
+
   });
 })
 
