@@ -19,27 +19,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       StatusBar.styleLightContent();
     }
 
-    //test to see can play with pouchdb
-    console.log('pouchDB constructor', PouchDB)
-    var db = new PouchDB('decisions-jakamama', {adapter : 'websql'});
-    console.log('have local db', db);
-    // var remotedb = new PouchDB('http://localhost:3000/decisions-jakamama');//local node CORS problems
-    var remotedb = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
-    // var remotedb = new PouchDB('http://localhost:5984/decisions-jakamama');//remote working
-    console.log('have remoteDB', remotedb);
-
-
-    db.sync(remotedb).on('complete', function () {
-      // yay, we're in sync!
-      console.log('in sync')
-      // db.get('1').then(function(doc){
-      //   console.log('doc', doc);
-      // })
-    }).on('error', function (err) {
-      console.log('error', err)
-      // boo, we hit an error!
-    });
-
   });
 })
 
@@ -71,23 +50,24 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   })
 
   .state('tab.chats', {
-      url: '/chats',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
-        }
+    url: '/chats',
+    views: {
+      'tab-chats': {
+        templateUrl: 'templates/tab-chats.html',
+        controller: 'ChatsCtrl'
       }
-    })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
-        }
+    }
+  })
+
+  .state('tab.chat-detail', {
+    url: '/chats/:chatId',
+    views: {
+      'tab-chats': {
+        templateUrl: 'templates/chat-detail.html',
+        controller: 'ChatDetailCtrl'
       }
-    })
+    }
+  })
 
   .state('tab.account', {
     url: '/account',
@@ -95,6 +75,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       'tab-account': {
         templateUrl: 'templates/tab-account.html',
         controller: 'AccountCtrl'
+      }
+    }
+  })
+
+  .state('tab.decisions', {
+    url: '/decisions',
+    views: {
+      'tab-decisions': {
+        templateUrl: 'templates/tab-decisions.html',
+        controller: 'DecisionsCtrl'
       }
     }
   });
