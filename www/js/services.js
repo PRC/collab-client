@@ -1,6 +1,6 @@
-angular.module('starter.services', [])
+var module = angular.module('starter.services', [])
 
-.factory('Chats', function() {
+module.factory('Chats', function() {
   // Might use a resource here that returns a JSON array
 
   // Some fake testing data
@@ -48,3 +48,57 @@ angular.module('starter.services', [])
     }
   };
 });
+
+module.factory('Decisions', function(){
+  var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
+  console.log('have localDB', localDB);
+  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+  console.log('have remoteDB', remoteDB);
+
+  return {
+    all:function(){
+      return localDB.get('1')
+    },
+
+    onUpdate:function(callBack){
+      localDB.sync(remoteDB).on('complete', function () {
+        // yay, we're in sync!
+        console.log('something has changed dude')
+        localDB.get('1').then(function(doc){
+          console.log('doc', doc);
+          callBack(doc)
+        })
+      }).on('error', function (err) {
+        console.log('error', err)
+        // boo, we hit an error!
+      });
+
+      localDB.sync(remoteDB, {
+        live: true,
+        retry: true
+      }).on('change', function (change) {
+        console.log("Something has changed dude")
+        // yo, something changed!
+        localDB.get('1').then(function(doc){
+          console.log('doc', doc);
+          callBack(doc)
+        })
+      });      
+    },
+
+    save:function(question){
+      localDB.get('1').then(function(doc) {
+        return localDB.put({
+          _id: '1',
+          _rev: doc._rev,
+          question: question
+        });
+      }).then(function(response) {
+        console.log("local db updated!");
+      }).catch(function (err) {
+        console.log(err);
+      });      
+    }
+  }
+
+})
