@@ -26,7 +26,7 @@ module.factory('Chats', function() {
     face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
   }, {
     id: 4,
-    name: 'Perry Governor',
+    name: 'Handsome Iain Ronald + 1',
     lastText: 'Look at my mukluks!',
     face: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg'
   }];
