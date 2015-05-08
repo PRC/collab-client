@@ -16,8 +16,8 @@ module.factory('Chats', function() {
     face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
   }, {
     id: 2,
-    name: 'Andrew Jostlin',
-    lastText: 'Did you get the ice cream?',
+    name: 'Jimmy de Jew',
+    lastText: 'Have you got my money, oy vey?',
     face: 'https://pbs.twimg.com/profile_images/491274378181488640/Tti0fFVJ.jpeg'
   }, {
     id: 3,
