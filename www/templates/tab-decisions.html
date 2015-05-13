@@ -10,10 +10,18 @@
             <input type="text" ng-model="decision.question">
           </label>   
           <button class="button" ng-click="save()">Save</button>
+          <div class="button-bar">
+            <button class="button button-balanced" ng-click="answer(true)">Yes</button>
+            <button class="button button-assertive" ng-click="answer(false)">No</button>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class=    
+      <div class="item item-divider">
+        <div class="row">
+          <div class="col">Yes: <h1 class="balanced">{{decision.yesPercent()}}%</h1></div>
+          <div class="col">No: <h1 class="assertive">{{decision.noPercent()}}%</h1>
+        </div>
+      </div>
+    </div>   
   </ion-content>
 </ion-view>

@@ -52,7 +52,7 @@ module.factory('Chats', function() {
 module.factory('Decisions', function(){
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
   console.log('have localDB', localDB);
-  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+  var remoteDB = new PouchDB('http://zeropumpkin.iriscouch.com/decisions-jakamama');// remote working
   console.log('have remoteDB', remoteDB);
 
   return {
@@ -86,12 +86,13 @@ module.factory('Decisions', function(){
       });      
     },
 
-    save:function(question){
+    save:function(decision){
       localDB.get('1').then(function(doc) {
         return localDB.put({
           _id: '1',
           _rev: doc._rev,
-          question: question
+          question: decision.question,
+          answers: decision.answers
         });
       }).then(function(response) {
         console.log("local db updated!");
