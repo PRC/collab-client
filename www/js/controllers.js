@@ -32,27 +32,41 @@ angular.module('starter.controllers', [])
       return answer;
     })
     doc.numTrue = _.size(doc.trueAnswers);
+    if(Decisions.user){
+      console.log('have user checkig', Decisions.user)
+      doc.myAnswer = doc.answers[Decisions.user.username];
+    }
     $scope.$apply(function(){
       $scope.decisions[0] = doc;
     });
   })
 
   Decisions.onUpdate(function(doc){
+    console.log('updating', Decisions.user)
     //@TODO create a doc factory to hydrate this
     doc.numAnswers = _.size(doc.answers)
     doc.trueAnswers = _.filter(doc.answers, function(answer){
       return answer;
     })
     doc.numTrue = _.size(doc.trueAnswers);
+    if(Decisions.user){
+      console.log('have user checkig', Decisions.user)
+      doc.myAnswer = doc.answers[Decisions.user.username];
+    }
     $scope.$apply( 
       $scope.decisions[0] = doc 
     );
   })
 
   $scope.save = function(){
-    console.log('saving', $scope.decisions[0])
-    console.log('underscore', _)
-    Decisions.save($scope.decisions[0])
+    if(Decisions.user){
+      if($scope.decisions[0].myAnswer === "true"){
+        $scope.decisions[0].answers[Decisions.user.username] = true;
+      } else {
+        $scope.decisions[0].answers[Decisions.user.username] = false;
+      }
+    }
+    Decisions.save( $scope.decisions[0] )
   }
   
 })
