@@ -2,7 +2,7 @@
   <ion-content>
 
     <div class="list card" ng-repeat="decision in decisions" type="item-text-wrap" href="#/tab/decisions/{{decision.id}}">
-      <div class="item item-divider">{{decision.question}}</div>
+      <div class="item item-divider"> {{decision.question}} {{ decision.numTrue }}/{{ decision.numAnswers }}</div>
       <div class="item item-body">
         <div>
           <label class="item item-input">

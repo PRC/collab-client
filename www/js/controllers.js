@@ -26,16 +26,33 @@ angular.module('starter.controllers', [])
   $scope.decisions = [];
 
   Decisions.all().then(function(doc){
-    $scope.$apply( $scope.decisions[0] = doc );
+    console.log('first doc', doc)
+    doc.numAnswers = _.size(doc.answers)
+    doc.trueAnswers = _.filter(doc.answers, function(answer){
+      return answer;
+    })
+    doc.numTrue = _.size(doc.trueAnswers);
+    $scope.$apply(function(){
+      $scope.decisions[0] = doc;
+    });
   })
 
   Decisions.onUpdate(function(doc){
-    $scope.$apply( $scope.decisions[0] = doc );
+    //@TODO create a doc factory to hydrate this
+    doc.numAnswers = _.size(doc.answers)
+    doc.trueAnswers = _.filter(doc.answers, function(answer){
+      return answer;
+    })
+    doc.numTrue = _.size(doc.trueAnswers);
+    $scope.$apply( 
+      $scope.decisions[0] = doc 
+    );
   })
 
   $scope.save = function(){
-    console.log('saving')
-    Decisions.save($scope.decisions[0].question)
+    console.log('saving', $scope.decisions[0])
+    console.log('underscore', _)
+    Decisions.save($scope.decisions[0])
   }
   
 })

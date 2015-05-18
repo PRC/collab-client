@@ -81,12 +81,13 @@ module.factory('Decisions', function(){
       })     
     },
 
-    save:function(question){
+    save:function(newDoc){
       localDB.get('1').then(function(doc) {
         return localDB.put({
           _id: '1',
           _rev: doc._rev,
-          question: question
+          question: newDoc.question,
+          answers: newDoc.answers
         });
       }).then(function(response) {
         console.log("local db updated!");
