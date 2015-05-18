@@ -54,6 +54,7 @@ module.factory('Decisions', function(){
   console.log('have localDB', localDB);
   var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
   console.log('have remoteDB', remoteDB);
+  localDB.sync(remoteDB, { live:true, retry:true } );
 
   return {
     all:function(){
@@ -61,29 +62,14 @@ module.factory('Decisions', function(){
     },
 
     onUpdate:function(callBack){
-      localDB.sync(remoteDB).on('complete', function () {
-        // yay, we're in sync!
-        console.log('something has changed dude')
-        localDB.get('1').then(function(doc){
-          console.log('doc', doc);
-          callBack(doc)
-        })
-      }).on('error', function (err) {
-        console.log('error', err)
-        // boo, we hit an error!
-      });
-
-      localDB.sync(remoteDB, {
-        live: true,
-        retry: true
-      }).on('change', function (change) {
+      localDB.on('change', function (change) {
         console.log("Something has changed dude")
         // yo, something changed!
         localDB.get('1').then(function(doc){
           console.log('doc', doc);
           callBack(doc)
         })
-      });      
+      })     
     },
 
     save:function(question){
