@@ -38,5 +38,14 @@ angular.module('starter.controllers', [])
     Decisions.save($scope.decisions[0].question)
   }
   
+})
+
+.controller('SignInCtrl', function($scope, $state) {
+
+  $scope.signIn = function(user) {
+    console.log('Sign-In', user);
+    $state.go('tab.decisions');
+  };
+  
 });
 
