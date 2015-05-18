@@ -40,10 +40,11 @@ angular.module('starter.controllers', [])
   
 })
 
-.controller('SignInCtrl', function($scope, $state) {
+.controller('SignInCtrl', function($scope, $state, Decisions) {
 
   $scope.signIn = function(user) {
     console.log('Sign-In', user);
+    Decisions.signIn(user)
     $state.go('tab.decisions');
   };
   

@@ -16,8 +16,8 @@ module.factory('Chats', function() {
     face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
   }, {
     id: 2,
-    name: 'Jimmy de Jew',
-    lastText: 'Have you got my money, oy vey?',
+    name: 'Jimmy',
+    lastText: 'Have youy?',
     face: 'https://pbs.twimg.com/profile_images/491274378181488640/Tti0fFVJ.jpeg'
   }, {
     id: 3,
@@ -48,8 +48,10 @@ module.factory('Chats', function() {
     }
   };
 });
-
+var count = 0;
 module.factory('Decisions', function(){
+  count++;
+  console.log('count', count);//highlighting that singleton
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
   console.log('have localDB', localDB);
   var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
@@ -57,7 +59,14 @@ module.factory('Decisions', function(){
   localDB.sync(remoteDB, { live:true, retry:true } );
 
   return {
+
+    signIn:function(user){
+      console.log('sign in this', this)
+      this.user = user;
+    },
+
     all:function(){
+      console.log('fetching all for user', this.user)
       return localDB.get('1')
     },
 
