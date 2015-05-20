@@ -54,7 +54,7 @@ module.factory('Decisions', function(){
   console.log('count', count);//highlighting that singleton
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
   console.log('have localDB', localDB);
-  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama-jay');// remote working
   console.log('have remoteDB', remoteDB);
   localDB.sync(remoteDB, { live:true, retry:true } );
 
