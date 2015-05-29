@@ -48,10 +48,102 @@ module.factory('Chats', function() {
     }
   };
 });
-var count = 0;
+
+module.factory('Groups', function(){
+
+  return {
+
+    all: function(callback){
+      // return [
+      //   {id:1, name: "decisions-jakamama-jay"},
+      //   {id:2, name: "decisions-STC"}
+      // ]#
+      console.log('trying to find 1', this.localGroupsDB)
+      this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
+        if(docs.rows.length > 0){
+          console.log('alldocs', docs);
+          console.log('docs.rows[0]', docs.rows[0].doc)
+          callback(docs.rows[0].doc.groups)
+        }
+      }.bind(this))
+    },
+
+    onUpdate:function(callback){
+      this.localGroupsDB.on('change', function (change) {
+        this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
+          console.log('alldocs', docs);
+          console.log('docs.rows[0]', docs.rows[0].doc)
+          callback(docs.rows[0].doc.groups)
+        }.bind(this))
+      }.bind(this))
+    },
+
+    signIn:function(user, success){
+      console.log('sign in user', user)
+      var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
+      signInDB.login(user.username, user.password).then(function (user) {
+        console.log("I'm user", user);
+        console.log('this', this)
+        this.user = user;
+        this.localGroupsDB = new PouchDB(user.name, {adapter : 'websql'});
+        console.log('have localDB', this.localGroupsDB);
+        var remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + user.name);
+        console.log('have remoteDB', remoteDB);
+        // this.localGroupsDB.sync(remoteDB, { live:true, retry:true } );
+        PouchDB.replicate(remoteDB, this.localGroupsDB, { live:true, retry:true })
+        success(user);
+      }.bind(this));
+
+    },
+    // signUp:function(user){
+    //   remoteDB.signup(user.username, user.password, {
+    //     metadata : {
+    //     }
+    //   }, function (err, response) {
+    //     // etc.
+    //   });      
+    // },
+  }
+});
+module.factory('Group', function(){
+  var Group = function(name, user){
+    this.name = name;
+    this.user = user;
+    this.localDB = new PouchDB(name, {adapter : 'websql'});
+    var remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
+    this.localDB.sync(remoteDB, { live:true, retry:true } );
+  }
+  Group.prototype = {
+    docToDecision:function(doc){
+      console.log('THE DOC', doc)
+      var decision = {}
+      decision.question = doc.question
+      decision.answers = doc.answers
+      decision.numAnswers = _.size(doc.answers)
+      decision.trueAnswers = _.filter(doc.answers, function(answer){
+        return answer;
+      })
+      decision.numTrue = _.size(decision.trueAnswers);
+      decision.myAnswer = doc.answers[this.user.name];
+      return decision;
+    },
+    getAllDecisions: function(callback){
+      this.localDB.allDocs({include_docs: true}).then(function(docs){
+        console.log('alldocs', docs);
+        console.log('docs.rows[0]', docs.rows[0].doc)
+        decisions = docs.rows.map(function(result){
+          return this.docToDecision(result.doc);
+        }.bind(this));
+        console.log('decisions', decisions)
+        callback(decisions)
+      }.bind(this))      
+    }
+  }
+
+  return Group;
+})
+
 module.factory('Decisions', function(){
-  count++;
-  console.log('count', count);//highlighting that singleton
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
   console.log('have localDB', localDB);
   var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama-jay');// remote working
@@ -59,11 +151,6 @@ module.factory('Decisions', function(){
   localDB.sync(remoteDB, { live:true, retry:true } );
 
   return {
-
-    signIn:function(user){
-      console.log('sign in this', this)
-      this.user = user;
-    },
 
     all:function(){
       console.log('fetching all for user', this.user)

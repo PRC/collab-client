@@ -66,12 +66,33 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+
   .state('tab.chat-detail', {
     url: '/chats/:chatId',
     views: {
       'tab-chats': {
         templateUrl: 'templates/chat-detail.html',
         controller: 'ChatDetailCtrl'
+      }
+    }
+  })
+
+  .state('tab.groups', {
+    url: '/groups',
+    views: {
+      'tab-groups': {
+        templateUrl: 'templates/tab-groups.html',
+        controller: 'GroupsCtrl'
+      }
+    }
+  })
+
+  .state('tab.group-detail', {
+    url: '/groups/:groupName',
+    views: {
+      'tab-groups': {
+        templateUrl: 'templates/group-detail.html',
+        controller: 'GroupDetailCtrl'
       }
     }
   })
@@ -85,16 +106,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
       }
     }
   })
-
-  .state('tab.decisions', {
-    url: '/decisions',
-    views: {
-      'tab-decisions': {
-        templateUrl: 'templates/tab-decisions.html',
-        controller: 'DecisionsCtrl'
-      }
-    }
-  });
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/sign-in');
