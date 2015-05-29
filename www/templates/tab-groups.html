@@ -5,6 +5,16 @@
         <h2>{{group.name}}</h2>
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
+      <div class="item item-input-inset">
+        <label class="item-input-wrapper">
+          <input type="text" placeholder="Add Group" ng-model="newGroup.name">
+        </label>
+        <button class="button button-small" ng-click="addGroup()">
+          Add Group
+        </button>
+      </div>
+
     </ion-list>
   </ion-content>
+
 </ion-view>

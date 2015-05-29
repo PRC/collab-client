@@ -49,7 +49,7 @@ module.factory('Chats', function() {
   };
 });
 
-module.factory('Groups', function(){
+module.factory('Groups', function($http){
 
   return {
 
@@ -90,11 +90,29 @@ module.factory('Groups', function(){
         var remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + user.name);
         console.log('have remoteDB', remoteDB);
         // this.localGroupsDB.sync(remoteDB, { live:true, retry:true } );
-        PouchDB.replicate(remoteDB, this.localGroupsDB, { live:true, retry:true })
+        // PouchDB.replicate(remoteDB, this.localGroupsDB, { live:true, retry:true })
+        this.localGroupsDB.sync(remoteDB, { live:true, retry:true } );
         success(user);
       }.bind(this));
-
     },
+
+    addGroup:function(name){
+      if(!this.user){return false}
+      console.log('name', name)
+      // add it to the list - should we do this l
+      this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
+        var groupsDoc = docs.rows[0].doc
+        groupsDoc.groups.push( { id:3,  name:name} )
+        console.log('adding group', groupsDoc )
+        this.localGroupsDB.put(groupsDoc); 
+      }.bind(this))
+      
+      //create a new database -need my admin friend to do this so send over deets
+      // var newRemoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
+      //should use a POST for this but getting cors shit so not doing for meantime
+      $http.get('http://localhost:8080?name=' + name + '&user=' + this.user.name)
+      //edit the security document new databse so only this.user can edit"'
+    }
     // signUp:function(user){
     //   remoteDB.signup(user.username, user.password, {
     //     metadata : {
@@ -144,6 +162,10 @@ module.factory('Group', function(){
         console.log("Something has changed dude")
         this.getAllDecisions(callback)
       }.bind(this))  
+    },
+    addUser:function(user){
+      //want to add to the security document of thr group
+      //want to add the list of groups on the user database
     },
     save:function(newDoc){
       console.log('saving new Doc', newDoc)

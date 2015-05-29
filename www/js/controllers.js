@@ -24,6 +24,7 @@ angular.module('starter.controllers', [])
 
 .controller('GroupsCtrl', function($scope, $state, Groups) {
   // $scope.groups = Groups.all();
+  $scope.newGroup = {}
   if(!Groups.user){ 
     console.log("no user on group", Groups)
     $state.go('/sign-in');
@@ -43,6 +44,11 @@ angular.module('starter.controllers', [])
       $scope.groups = groups;
     });
   })
+
+  $scope.addGroup = function(){
+    console.log('trying to add group', $scope.newGroup);
+    Groups.addGroup($scope.newGroup.name)
+  }
 })
 
 .controller('GroupDetailCtrl', function($scope, $stateParams, Groups, Group) {
