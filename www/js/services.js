@@ -117,9 +117,10 @@ module.factory('Group', function(){
     docToDecision:function(doc){
       console.log('THE DOC', doc)
       var decision = {}
-      decision.question = doc.question
-      decision.answers = doc.answers
-      decision.numAnswers = _.size(doc.answers)
+      decision._id = doc._id;
+      decision.question = doc.question;
+      decision.answers = doc.answers;
+      decision.numAnswers = _.size(doc.answers);
       decision.trueAnswers = _.filter(doc.answers, function(answer){
         return answer;
       })
@@ -137,46 +138,23 @@ module.factory('Group', function(){
         console.log('decisions', decisions)
         callback(decisions)
       }.bind(this))      
-    }
-  }
-
-  return Group;
-})
-
-module.factory('Decisions', function(){
-  var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
-  console.log('have localDB', localDB);
-  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama-jay');// remote working
-  console.log('have remoteDB', remoteDB);
-  localDB.sync(remoteDB, { live:true, retry:true } );
-
-  return {
-
-    all:function(){
-      console.log('fetching all for user', this.user)
-      return localDB.get('1')
     },
-
-    onUpdate:function(callBack){
-      localDB.on('change', function (change) {
+    onUpdate:function(callback){
+      this.localDB.on('change', function (change) {
         console.log("Something has changed dude")
-        // yo, something changed!
-        localDB.get('1').then(function(doc){
-          console.log('doc', doc);
-          callBack(doc)
-        })
-      })     
+        this.getAllDecisions(callback)
+      }.bind(this))  
     },
-
     save:function(newDoc){
-      localDB.get('1').then(function(doc) {
-        return localDB.put({
-          _id: '1',
+      console.log('saving new Doc', newDoc)
+      this.localDB.get(newDoc._id).then(function(doc) {
+        return this.localDB.put({
+          _id: doc._id,
           _rev: doc._rev,
           question: newDoc.question,
           answers: newDoc.answers
         });
-      }).then(function(response) {
+      }.bind(this)).then(function(response) {
         console.log("local db updated!");
       }).catch(function (err) {
         console.log(err);
@@ -184,4 +162,5 @@ module.factory('Decisions', function(){
     }
   }
 
+  return Group;
 })

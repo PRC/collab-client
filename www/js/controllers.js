@@ -45,7 +45,7 @@ angular.module('starter.controllers', [])
   })
 })
 
-.controller('GroupDetailCtrl', function($scope, $stateParams, Decisions, Groups, Group) {
+.controller('GroupDetailCtrl', function($scope, $stateParams, Groups, Group) {
 
   console.log('group detail controller $stateParams', $stateParams)
   $scope.decisions = [];
@@ -61,38 +61,12 @@ angular.module('starter.controllers', [])
     });
   })
 
-  // Decisions.all().then(function(doc){
-  //   console.log('first doc', doc)
-  //   doc.numAnswers = _.size(doc.answers)
-  //   doc.trueAnswers = _.filter(doc.answers, function(answer){
-  //     return answer;
-  //   })
-  //   doc.numTrue = _.size(doc.trueAnswers);
-  //   if(Groups.user){
-  //     console.log('have user checkig', Groups.user)
-  //     doc.myAnswer = doc.answers[Groups.user.name];
-  //   }
-  //   $scope.$apply(function(){
-  //     $scope.decisions[0] = doc;
-  //   });
-  // })
-
-  // Decisions.onUpdate(function(doc){
-  //   console.log('updating', Groups.user)
-  //   //@TODO create a doc factory to hydrate this
-  //   doc.numAnswers = _.size(doc.answers)
-  //   doc.trueAnswers = _.filter(doc.answers, function(answer){
-  //     return answer;
-  //   })
-  //   doc.numTrue = _.size(doc.trueAnswers);
-  //   if(Groups.user){
-  //     console.log('have user checkig', Groups.user)
-  //     doc.myAnswer = doc.answers[Groups.user.name];
-  //   }
-  //   $scope.$apply( 
-  //     $scope.decisions[0] = doc 
-  //   );
-  // })
+  group.onUpdate(function(decision){
+    console.log('something changed', decisions);
+    $scope.$apply(function(){
+      $scope.decisions = decisions;
+    });  
+  })
 
   $scope.save = function(){
     console.log('saving', Groups.user)
@@ -103,7 +77,7 @@ angular.module('starter.controllers', [])
         $scope.decisions[0].answers[Groups.user.name] = false;
       }
     }
-    Decisions.save( $scope.decisions[0] )
+    group.save( $scope.decisions[0] )
   }
 })
 
