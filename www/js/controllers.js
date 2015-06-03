@@ -24,9 +24,9 @@ angular.module('starter.controllers', [])
 
 .controller('GroupsCtrl', function($scope, $state, Groups) {
   // $scope.groups = Groups.all();
-  $scope.newGroup = {}
+  $scope.newGroup = {};
   if(!Groups.user){ 
-    console.log("no user on group", Groups)
+    console.log("no user on group", Groups);
     $state.go('/sign-in');
   } else{
     console.log('have user')
@@ -47,7 +47,7 @@ angular.module('starter.controllers', [])
 
   $scope.addGroup = function(){
     console.log('trying to add group', $scope.newGroup);
-    Groups.addGroup($scope.newGroup.name)
+    Groups.addGroup($scope.newGroup.name);
   }
 })
 
@@ -55,10 +55,11 @@ angular.module('starter.controllers', [])
 
   console.log('group detail controller $stateParams', $stateParams)
   $scope.decisions = [];
+  $scope.newDecision = {};
 
-  var group = new Group($stateParams.groupName, Groups.user)
+  var group = new Group($stateParams.groupName, Groups.user);
 
-  console.log('group', group)
+  console.log('group', group);
 
   group.getAllDecisions(function(decisions){
     console.log('got decisions', decisions);
@@ -74,16 +75,22 @@ angular.module('starter.controllers', [])
     });  
   })
 
-  $scope.save = function(){
-    console.log('saving', Groups.user)
+  $scope.save = function(index){
+    console.log('saving index', index);
     if(Groups.user){
-      if($scope.decisions[0].myAnswer === "true"){
-        $scope.decisions[0].answers[Groups.user.name] = true;
+      if($scope.decisions[index].myAnswer === "true"){
+        $scope.decisions[index].answers[Groups.user.name] = true;
       } else {
-        $scope.decisions[0].answers[Groups.user.name] = false;
+        $scope.decisions[index].answers[Groups.user.name] = false;
       }
     }
-    group.save( $scope.decisions[0] )
+    group.save( $scope.decisions[index] )
+  }
+
+  $scope.addDecision = function(){
+    console.log('trying to add group', $scope.newDecision);
+
+    group.addDecision($scope.newDecision.question);
   }
 })
 
@@ -92,7 +99,7 @@ angular.module('starter.controllers', [])
   $scope.signIn = function(user) {
     console.log('Sign-In', user);
     Groups.signIn(user, function(user){
-      console.log('success', user)
+      console.log('success', user);
       $state.go('tab.groups');
     }.bind(this))  
   };

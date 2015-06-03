@@ -13,11 +13,19 @@
             <span class="input-label">My Answer</span>
             <input type="text" ng-model="decision.myAnswer">
           </label>
-          <button class="button" ng-click="save()">Save</button>
+          <button class="button" ng-model="decision" ng-click="save({{ $index }})">Save</button>
         </div>
       </div>
     </div>
 
-    <div class=    
+    <div class="item item-input-inset">
+      <label class="item-input-wrapper">
+        <input type="text" placeholder="New Decision" ng-model="newDecision.question">
+      </label>
+      <button class="button button-small"  ng-click="addDecision()">
+        Add Decision
+      </button>
+    </div>
+ 
   </ion-content>
 </ion-view>

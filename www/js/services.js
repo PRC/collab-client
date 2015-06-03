@@ -99,19 +99,20 @@ module.factory('Groups', function($http){
     addGroup:function(name){
       if(!this.user){return false}
       console.log('name', name)
-      // add it to the list - should we do this l
+      // add it to the list
       this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
         var groupsDoc = docs.rows[0].doc
         groupsDoc.groups.push( { id:3,  name:name} )
         console.log('adding group', groupsDoc )
         this.localGroupsDB.put(groupsDoc); 
       }.bind(this))
-      
-      //create a new database -need my admin friend to do this so send over deets
-      // var newRemoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
+      //@TODO create a new localdb so can progress without connection
+
+      //create a new database on remote -need my admin friend to do this so send over deets
       //should use a POST for this but getting cors shit so not doing for meantime
-      $http.get('http://localhost:8080?name=' + name + '&user=' + this.user.name)
-      //edit the security document new databse so only this.user can edit"'
+      $http.get('http://localhost:8080/add_group?name=' + name + '&user=' + this.user.name)
+
+      //@TODOedit the security document new databse so only this.user can edit"'
     }
     // signUp:function(user){
     //   remoteDB.signup(user.username, user.password, {
@@ -150,8 +151,11 @@ module.factory('Group', function(){
       this.localDB.allDocs({include_docs: true}).then(function(docs){
         console.log('alldocs', docs);
         console.log('docs.rows[0]', docs.rows[0].doc)
-        decisions = docs.rows.map(function(result){
-          return this.docToDecision(result.doc);
+        decisions = []
+        docs.rows.forEach(function(result){
+          if(result.doc._id != "users"){
+            decisions.push(this.docToDecision(result.doc));
+          }
         }.bind(this));
         console.log('decisions', decisions)
         callback(decisions)
@@ -163,9 +167,21 @@ module.factory('Group', function(){
         this.getAllDecisions(callback)
       }.bind(this))  
     },
+    addDecision:function(question){
+      console.log('adding decision', question)
+      this.localDB.get("users").then(function(doc){
+        answers = {}
+        doc.users.forEach(function(user){
+          answers[user] = false
+        })
+        this.localDB.post({question: question, answers:answers}); //change to put and manually create id
+      }.bind(this))
+      
+    },
     addUser:function(user){
-      //want to add to the security document of thr group
-      //want to add the list of groups on the user database
+      //@TODO add user to the users table of the group db
+      //@TODO add user to the members on the security document of the group
+      //@TODO add the group to the list of groups on the user database
     },
     save:function(newDoc){
       console.log('saving new Doc', newDoc)
