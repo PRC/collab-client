@@ -89,7 +89,7 @@ angular.module('starter.controllers', [])
 
   $scope.addDecision = function(){
     console.log('trying to add group', $scope.newDecision);
-
+    console.log('sup brah');
     group.addDecision($scope.newDecision.question);
   }
 })

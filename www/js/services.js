@@ -114,8 +114,9 @@ module.factory('Groups', function($http){
 
       //@TODOedit the security document new databse so only this.user can edit"'
     }
-    // signUp:function(user){
-    //   remoteDB.signup(user.username, user.password, {
+    // signIn:function(user){
+    //   var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
+    //   signInDB.signup(user.username, user.password, {
     //     metadata : {
     //     }
     //   }, function (err, response) {
