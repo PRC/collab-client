@@ -23,20 +23,66 @@ angular.module('starter.controllers', [])
 })
 
 .controller('DecisionsCtrl', function($scope, Decisions) {
-  $scope.decisions = [];
+  $scope.decisions = {};
+  $scope.data      = {};
 
-  Decisions.all().then(function(doc){
-    $scope.$apply( $scope.decisions[0] = doc );
-  })
+  //listens to DB updates - merges remote diffs (to be changed)
+  Decisions.synchDB(function(result){
+    console.log('controller: synchDB(' + result + ')');
+    $scope.$apply(function(){
+      _.each(result, function(element, index, list){
+        $scope.decisions[element._id] = element;
+      })}
+    );
+  });
 
-  Decisions.onUpdate(function(doc){
-    $scope.$apply( $scope.decisions[0] = doc );
-  })
+  //retrieves all decisions
+  Decisions.getDecisions(function(result){
+    console.log('controller: getDecisions(' + result + ')');
+    $scope.$apply($scope.decisions = result);
+  });
 
-  $scope.save = function(){
-    console.log('saving')
-    Decisions.save($scope.decisions[0].question)
+  //adds a decision by passing a question
+  $scope.addDecision = function(){
+    console.log('controller: addDecision(' + $scope.data.question + ')');
+    Decisions.addDecision($scope.data.question); 
+    Decisions.getDecisions(function(result){
+      $scope.$apply($scope.decisions = result);
+    });
+    $scope.data.question = '';
+  }
+
+  //updates a decision
+  $scope.updateDecision = function(decision){
+    console.log('controller: updateDecision(' + decision + ')');
+    Decisions.updateDecision(decision);
+  }
+
+  //removes a decision
+  $scope.removeDecision = function(decision){
+    console.log('controller: removeDecision(' + decision + ')');
+    Decisions.removeDecision(decision);
+    Decisions.getDecisions(function(result){
+      $scope.$apply($scope.decisions = result);
+    });
   }
   
+  //accepts a decision
+  $scope.acceptDecision = function(decision){
+    console.log('controller: acceptDecision(' + decision + ')');
+    Decisions.addAnswer(decision, true);
+    Decisions.getDecisions(function(result){
+      $scope.$apply($scope.decisions = result);
+    });
+  }
+
+  //rejects a decision
+  $scope.rejectDecision = function(decision){
+    console.log('controller: rejectDecision(' + decision + ')');
+    Decisions.addAnswer(decision, false);
+    Decisions.getDecisions(function(result){
+      $scope.$apply($scope.decisions = result);
+    });
+  }
 });
 
