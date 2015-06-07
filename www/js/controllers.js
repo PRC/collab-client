@@ -102,7 +102,15 @@ angular.module('starter.controllers', [])
       console.log('success', user);
       $state.go('tab.groups');
     }.bind(this))  
-  };
-  
+  }
+
+  $scope.signUp = function(user) {
+    console.log('Sign-Up', user);
+    Groups.signUp(user, function(user){
+      console.log('success', user);
+      $state.go('tab.groups');
+    }.bind(this))  
+  } 
+
 });
 
