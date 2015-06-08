@@ -56,6 +56,7 @@ angular.module('starter.controllers', [])
   console.log('group detail controller $stateParams', $stateParams)
   $scope.decisions = [];
   $scope.newDecision = {};
+  $scope.newUser = {};
 
   var group = new Group($stateParams.groupName, Groups.user);
 
@@ -91,6 +92,12 @@ angular.module('starter.controllers', [])
     console.log('trying to add group', $scope.newDecision);
 
     group.addDecision($scope.newDecision.question);
+  }
+
+  $scope.addUser = function(){
+    console.log('trying to add user', $scope.newUser);
+
+    group.addUser($scope.newUser.name);
   }
 })
 

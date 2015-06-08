@@ -124,13 +124,13 @@ module.factory('Groups', function($http){
     // },
   }
 });
-module.factory('Group', function(){
+module.factory('Group', function($http){
   var Group = function(name, user){
     this.name = name;
     this.user = user;
     this.localDB = new PouchDB(name, {adapter : 'websql'});
-    var remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
-    this.localDB.sync(remoteDB, { live:true, retry:true } );
+    this.remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
+    this.localDB.sync(this.remoteDB, { live:true, retry:true } );
   }
   Group.prototype = {
     docToDecision:function(doc){
@@ -178,10 +178,53 @@ module.factory('Group', function(){
       }.bind(this))
       
     },
-    addUser:function(user){
-      //@TODO add user to the users table of the group db
-      //@TODO add user to the members on the security document of the group
-      //@TODO add the group to the list of groups on the user database
+    addUser:function(newUser){
+      //Add user to the users table of the group db
+      this.localDB.get("users").then(function(doc){
+        var users = doc.users;
+        users.push(newUser)
+        return this.localDB.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          users: users
+        });
+      }.bind(this)) 
+
+      //Add user to the members on the security document of the group
+      //@TODO must have connection to internet, how to remove this
+      this.remoteDB.get("_security").then(function(doc){
+        var members = doc.members
+        members.names.push(newUser)
+        this.remoteDB.request({
+          method: 'PUT',
+          url: '_security',  
+          body: {
+            admins: doc.admins,
+            members: members
+          }
+        }).then(function(){
+          console.log('security doc updated')
+        });
+      }.bind(this))
+
+      //Add the group to the list of groups on the user database
+      //@TODO must have connection to internet, how to remove this
+      var userDB = new PouchDB('http://jakamama.iriscouch.com/' + newUser);
+      console.log('userDB', userDB);
+      userDB.allDocs({include_docs: true}).then(function(docs){
+        console.log('alldocs', docs);
+        console.log('docs.rows[0]', docs.rows[0].doc)
+        var userDoc = docs.rows[0].doc;
+        var groups = userDoc.groups || [];
+        groups.push( { id:'xxx', name:this.name } );
+        return userDB.put({
+          _id: userDoc._id,
+          _rev: userDoc._rev,
+          groups: groups
+        });
+
+      }.bind(this))    
+
     },
     save:function(newDoc){
       console.log('saving new Doc', newDoc)
@@ -200,5 +243,5 @@ module.factory('Group', function(){
     }
   }
 
-  return Group;
+  return Group;//return group const
 })
