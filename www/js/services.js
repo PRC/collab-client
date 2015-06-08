@@ -50,22 +50,28 @@ module.factory('Chats', function() {
 });
 
 module.factory('Decisions', function(){
+  //init
+  var DEBUG = true;
+
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
-  console.log('local DB established');
+  if(DEBUG){console.log('local DB established', localDB);}
   var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
-  console.log('remote DB established');
+  if(DEBUG){console.log('remote DB established', remoteDB);}
 
   return {
-    
+    //utils
+    getDebug: function(){
+      return DEBUG;
+    },
+
     //synchs local DB with remote
     synchDB: function(callback){
-     console.log('services: synchDB()');
+     if(DEBUG){console.log('services: synchDB(', callback, ')');}
      localDB.sync(remoteDB, {
         live : true
        ,retry: true
       }).on('change', function(result){
-        console.log(result);
-        callback(result.change.docs);
+        callback(result.change.docs);  
       }).on('error', function (err) {
         console.log(err);
       });
@@ -73,12 +79,12 @@ module.factory('Decisions', function(){
 
     //returns a collection of all decisions from local DB
     getDecisions: function(callback){
-      console.log('services: getDecisions()');
+      if(DEBUG){console.log('services: getDecisions(', callback, ')');}
       localDB.allDocs({
         include_docs: true
        ,descending  : true
       }).then(function(result){
-        var decisions = _.object(_.pluck(result.rows, 'id'), _.pluck(result.rows, 'doc'));        
+          var decisions = _.object(_.pluck(result.rows, 'id'), _.pluck(result.rows, 'doc'));      
           callback(decisions);
         }).catch(function (err) {
           console.log(err); 
@@ -87,41 +93,40 @@ module.factory('Decisions', function(){
 
     //adds a decision to the local DB and sets its one and only question
     addDecision: function(question) {
-      console.log('services: addDecision(' + question + ')');
+      if(DEBUG){console.log('services: addDecision(', question, ')');}
       var decision = {
         _id     : new Date().toISOString()
-       ,_deleted: false
        ,question: question
        ,answers : []
       }
       localDB.put(decision, function(err, result) {
-        if (err) {return console.log(err);}
+        if(err){return console.log(err);}
       });
     },
 
     //removes a decision from local DB by flagging it as 'deleted'
     removeDecision: function(decision) {
-      console.log('services: removeDecision(' + decision + ')');
-      decision._deleted= true;
+      if(DEBUG){console.log('services: removeDecision(', decision, ')');}
+      decision._deleted = true;
       localDB.put(decision, function(err, result) {
-        if (err) {return console.log(err);}
+        if(err){return console.log(err);}
       });
     },
     
     //updates a decision and all its attributes in the local DB
     updateDecision: function(decision) {
-      console.log('services: updateDecision(' + decision + ')');
+      if(DEBUG){console.log('services: updateDecision(', decision, ')');}
       localDB.put(decision, function(err, result) {
-        if (err) {return console.log(err);}
+        if(err){return console.log(err);}
       });
     },
 
     //adds an answer to the array of answers of a given decision and updates local DB
     addAnswer: function(decision, answer){
-      console.log('services: addAnswer(' + decision + ', ' + answer + ')');
+      if(DEBUG){console.log('services: addAnswer(', decision, ', ', answer, ')');}
       decision.answers.push(answer);
       localDB.put(decision, function(err, result) {
-        if (err) {return console.log(err);}
+        if(err){return console.log(err);}
       });
     }
 

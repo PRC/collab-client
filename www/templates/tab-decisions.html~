@@ -16,8 +16,8 @@
       <div style="float: right;">
         <button class="button" ng-click="updateDecision(decision)">Update</button>
         <button class="button" ng-click="removeDecision(decision)">Remove</button>
-        <button class="button" ng-click="setDecision(decision, true)">Accept</button>
-        <button class="button" ng-click="setDecision(decision, false)">Reject</button>
+        <button class="button" ng-click="acceptDecision(decision)">Accept</button>
+        <button class="button" ng-click="rejectDecision(decision)">Reject</button>
       </div>
     </div>
     <div class=    
