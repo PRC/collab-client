@@ -96,6 +96,39 @@ module.factory('Groups', function($http){
       }.bind(this));
     },
 
+    signUp: function(user, success){
+      //get reference to service in order to call other service
+      var self = this;
+      console.log('sign up user')
+      //sign up new user via dummy db temp_users.  This is required for the signup
+      //functionality to have a db to sign up to, in order to create user.
+      var remoteDB = new PouchDB('http://jakamama.iriscouch.com/temp_users');
+      remoteDB.signup(user.username, user.password, function(err, response){
+        if (err){
+          if (err.name === 'conflict') {
+            console.log('Username already exists, Error: ', err, response)
+          }else if (err.name === 'forbidden'){
+            console.log('Forbidden characters used, Error: ', err, response)
+          }else {
+            console.log('Error: ', err, response)
+          }
+        }
+        else{
+          //When the user has successfully been signed up, call the host to create the users db
+          $http.get('http://localhost:8080/add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
+             // this callback will be called asynchronously when the response is available
+             console.log('add group request success' + status)
+             //signIn using the new user.
+             self.signIn(user, success)
+        }).error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs or server returns response with an error status.
+            console.log('add group request failure', headers )
+         });
+        }
+      });
+     },
+
+
     addGroup:function(name){
       if(!this.user){return false}
       console.log('name', name)
@@ -114,8 +147,9 @@ module.factory('Groups', function($http){
 
       //@TODOedit the security document new databse so only this.user can edit"'
     }
-    // signUp:function(user){
-    //   remoteDB.signup(user.username, user.password, {
+    // signIn:function(user){
+    //   var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
+    //   signInDB.signup(user.username, user.password, {
     //     metadata : {
     //     }
     //   }, function (err, response) {

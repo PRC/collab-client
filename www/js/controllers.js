@@ -90,7 +90,7 @@ angular.module('starter.controllers', [])
 
   $scope.addDecision = function(){
     console.log('trying to add group', $scope.newDecision);
-
+    console.log('sup brah');
     group.addDecision($scope.newDecision.question);
   }
 
@@ -109,7 +109,15 @@ angular.module('starter.controllers', [])
       console.log('success', user);
       $state.go('tab.groups');
     }.bind(this))  
-  };
-  
+  }
+
+  $scope.signUp = function(user) {
+    console.log('Sign-Up', user);
+    Groups.signUp(user, function(user){
+      console.log('success', user);
+      $state.go('tab.groups');
+    }.bind(this))  
+  } 
+
 });
 
