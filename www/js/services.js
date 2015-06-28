@@ -49,6 +49,7 @@ module.factory('Chats', function() {
   };
 });
 
+<<<<<<< HEAD
 module.factory('Groups', function($http){
 
   return {
@@ -211,6 +212,34 @@ module.factory('Group', function($http){
         this.localDB.post({question: question, answers:answers}); //change to put and manually create id
       }.bind(this))
       
+=======
+module.factory('Decisions', function(){
+  //init
+  var DEBUG = true;
+
+  var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
+  if(DEBUG){console.log('local DB established', localDB);}
+  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+  if(DEBUG){console.log('remote DB established', remoteDB);}
+
+  return {
+    //utils
+    getDebug: function(){
+      return DEBUG;
+    },
+
+    //synchs local DB with remote
+    synchDB: function(callback){
+     if(DEBUG){console.log('services: synchDB(', callback, ')');}
+     localDB.sync(remoteDB, {
+        live : true
+       ,retry: true
+      }).on('change', function(result){
+        callback(result.change.docs);  
+      }).on('error', function (err) {
+        console.log(err);
+      });
+>>>>>>> ka-branch
     },
     addUser:function(newUser){
       //Add user to the users table of the group db
@@ -259,6 +288,7 @@ module.factory('Group', function($http){
 
       }.bind(this))    
 
+<<<<<<< HEAD
     },
     save:function(newDoc){
       console.log('saving new Doc', newDoc)
@@ -274,10 +304,66 @@ module.factory('Group', function($http){
       }).catch(function (err) {
         console.log(err);
       });      
-    }
-  }
+=======
+    //returns a collection of all decisions from local DB
+    getDecisions: function(callback){
+      if(DEBUG){console.log('services: getDecisions(', callback, ')');}
+      localDB.allDocs({
+        include_docs: true
+       ,descending  : true
+      }).then(function(result){
+          var decisions = _.object(_.pluck(result.rows, 'id'), _.pluck(result.rows, 'doc'));      
+          callback(decisions);
+        }).catch(function (err) {
+          console.log(err); 
+        });
+    },
 
+    //adds a decision to the local DB and sets its one and only question
+    addDecision: function(question) {
+      if(DEBUG){console.log('services: addDecision(', question, ')');}
+      var decision = {
+        _id     : new Date().toISOString()
+       ,question: question
+       ,answers : []
+      }
+      localDB.put(decision, function(err, result) {
+        if(err){return console.log(err);}
+      });
+    },
+
+    //removes a decision from local DB by flagging it as 'deleted'
+    removeDecision: function(decision) {
+      if(DEBUG){console.log('services: removeDecision(', decision, ')');}
+      decision._deleted = true;
+      localDB.put(decision, function(err, result) {
+        if(err){return console.log(err);}
+      });
+    },
+    
+    //updates a decision and all its attributes in the local DB
+    updateDecision: function(decision) {
+      if(DEBUG){console.log('services: updateDecision(', decision, ')');}
+      localDB.put(decision, function(err, result) {
+        if(err){return console.log(err);}
+      });
+    },
+
+    //adds an answer to the array of answers of a given decision and updates local DB
+    addAnswer: function(decision, answer){
+      if(DEBUG){console.log('services: addAnswer(', decision, ', ', answer, ')');}
+      decision.answers.push(answer);
+      localDB.put(decision, function(err, result) {
+        if(err){return console.log(err);}
+      });
+>>>>>>> ka-branch
+    }
+
+<<<<<<< HEAD
   return Group;//return group const
+=======
+  }
+>>>>>>> ka-branch
 })
 
 module.factory('Decisions', function(){
