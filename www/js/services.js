@@ -49,7 +49,6 @@ module.factory('Chats', function() {
   };
 });
 
-<<<<<<< HEAD
 module.factory('Groups', function($http){
 
   return {
@@ -212,7 +211,6 @@ module.factory('Group', function($http){
         this.localDB.post({question: question, answers:answers}); //change to put and manually create id
       }.bind(this))
       
-=======
 module.factory('Decisions', function(){
   //init
   var DEBUG = true;
@@ -239,7 +237,6 @@ module.factory('Decisions', function(){
       }).on('error', function (err) {
         console.log(err);
       });
->>>>>>> ka-branch
     },
     addUser:function(newUser){
       //Add user to the users table of the group db
@@ -288,7 +285,6 @@ module.factory('Decisions', function(){
 
       }.bind(this))    
 
-<<<<<<< HEAD
     },
     save:function(newDoc){
       console.log('saving new Doc', newDoc)
@@ -304,7 +300,6 @@ module.factory('Decisions', function(){
       }).catch(function (err) {
         console.log(err);
       });      
-=======
     //returns a collection of all decisions from local DB
     getDecisions: function(callback){
       if(DEBUG){console.log('services: getDecisions(', callback, ')');}
@@ -356,14 +351,10 @@ module.factory('Decisions', function(){
       localDB.put(decision, function(err, result) {
         if(err){return console.log(err);}
       });
->>>>>>> ka-branch
     }
 
-<<<<<<< HEAD
   return Group;//return group const
-=======
   }
->>>>>>> ka-branch
 })
 
 module.factory('Decisions', function(){

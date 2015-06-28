@@ -22,7 +22,6 @@ angular.module('starter.controllers', [])
   };
 })
 
-<<<<<<< HEAD
 .controller('GroupsCtrl', function($scope, $state, Groups) {
   // $scope.groups = Groups.all();
   $scope.newGroup = {};
@@ -135,7 +134,6 @@ angular.module('starter.controllers', [])
     $scope.$apply($scope.decisions = result);
   });
 
-=======
 .controller('DecisionsCtrl', function($scope, Decisions) {
   //init
   $scope.decisions = {};
@@ -149,7 +147,6 @@ angular.module('starter.controllers', [])
     $scope.$apply($scope.decisions = result);
   });
 
->>>>>>> ka-branch
   //listens to DB updates - merges remote diffs (to be changed)
   Decisions.synchDB(function(result){
     if(DEBUG){console.log('controller: synchDB(', result, ')');}
@@ -197,10 +194,5 @@ angular.module('starter.controllers', [])
       $scope.$apply($scope.decisions = result);
     });
   }
-<<<<<<< HEAD
-=======
-
-});
->>>>>>> ka-branch
 
 });
