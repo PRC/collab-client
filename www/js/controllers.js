@@ -134,19 +134,6 @@ angular.module('starter.controllers', [])
     $scope.$apply($scope.decisions = result);
   });
 
-.controller('DecisionsCtrl', function($scope, Decisions) {
-  //init
-  $scope.decisions = {};
-  $scope.data      = {};
-
-  var DEBUG = Decisions.getDebug();
-
-  //retrieves all decisions
-  Decisions.getDecisions(function(result){
-    if(DEBUG){console.log('controller: getDecisions(', result, ')');}
-    $scope.$apply($scope.decisions = result);
-  });
-
   //listens to DB updates - merges remote diffs (to be changed)
   Decisions.synchDB(function(result){
     if(DEBUG){console.log('controller: synchDB(', result, ')');}

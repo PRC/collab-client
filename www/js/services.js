@@ -299,7 +299,8 @@ module.factory('Decisions', function(){
         console.log("local db updated!");
       }).catch(function (err) {
         console.log(err);
-      });      
+      });
+    },      
     //returns a collection of all decisions from local DB
     getDecisions: function(callback){
       if(DEBUG){console.log('services: getDecisions(', callback, ')');}
