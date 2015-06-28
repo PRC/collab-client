@@ -94,6 +94,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     }
   })
 
+  .state('tab.decisions', {
+    url: '/decisions',
+    views: {
+      'tab-decisions': {
+        templateUrl: 'templates/tab-decisions.html',
+        controller: 'DecisionsCtrl'
+      }
+    }
+  })
+
   .state('tab.group-detail', {
     url: '/groups/:groupName',
     views: {
