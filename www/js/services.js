@@ -20,30 +20,25 @@ module.factory('Groups', function($http, AuthDB){
     },
 
     onUpdate:function(callback){
-      this.localGroupsDB.on('change', function (change) {
-        this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
-          console.log('alldocs', docs);
-          console.log('docs.rows[0]', docs.rows[0].doc)
-          callback(docs.rows[0].doc.groups)
-        }.bind(this))
-      }.bind(this))
+      this.localGroupsDB.sync(this.remoteDB, { live:true, retry:true, include_docs:true } ).on('change', function(info){
+        console.log('something has changed SYNNC', info)
+        if(info.direction == "pull"){
+          callback(info.change.docs[0].groups)
+        }
+      }.bind(this));
     },
 
     signIn:function(user, success){
       this.signOut()
       console.log('sign in user', user)
-      // var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
       AuthDB.login(user.username, user.password).then(function (user) {
         console.log("I'm user", user);
         console.log('this', this)
         this.user = user;
         this.localGroupsDB = new PouchDB(user.name, {adapter : 'websql'});
+        this.remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + user.name);
         console.log('have localDB', this.localGroupsDB);
-        var remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + user.name);
-        console.log('have remoteDB', remoteDB);
-        // this.localGroupsDB.sync(remoteDB, { live:true, retry:true } );
-        // PouchDB.replicate(remoteDB, this.localGroupsDB, { live:true, retry:true })
-        this.localGroupsDB.sync(remoteDB, { live:true, retry:true } );
+        console.log('have remoteDB', this.remoteDB);
         success(user);
       }.bind(this));
     },
@@ -53,8 +48,6 @@ module.factory('Groups', function($http, AuthDB){
       this.signOut()
       var self = this;
       console.log('sign up user')
-      //sign up new user via dummy db temp_users.  This is required for the signup
-      //functionality to have a db to sign up to, in order to create user.
       AuthDB.signup(user.username, user.password, function(err, response){
         if (err){
           if (err.name === 'conflict') {
@@ -93,31 +86,22 @@ module.factory('Groups', function($http, AuthDB){
 
     addGroup:function(name){
       if(!this.user){return false}
-      console.log('name', name)
-      // add it to the list
-      this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
-        var groupsDoc = docs.rows[0].doc
-        groupsDoc.groups.push( { id:3,  name:name} )
-        console.log('adding group', groupsDoc )
-        this.localGroupsDB.put(groupsDoc); 
-      }.bind(this))
+
+
       //@TODO create a new localdb so can progress without connection
 
       //create a new database on remote -need my admin friend to do this so send over deets
       //should use a POST for this but getting cors shit so not doing for meantime
-      $http.get('https://hydro-minister-3539.herokuapp.com/add_group?name=' + name + '&user=' + this.user.name)
+      $http.get('https://hydro-minister-3539.herokuapp.com/add_group?name=' + name + '&user=' + this.user.name).
+        success(function(data){
+          console.log('heroku created a group for use ')
+        }).
+        error(function(data){
+          console.log('heroku bailed on creating a group boo ')
+        });
 
       //@TODOedit the security document new databse so only this.user can edit"'
     }
-    // signIn:function(user){
-    //   var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
-    //   signInDB.signup(user.username, user.password, {
-    //     metadata : {
-    //     }
-    //   }, function (err, response) {
-    //     // etc.
-    //   });      
-    // },
   }
 });
 module.factory('Group', function($http){
