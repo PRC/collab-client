@@ -1,0 +1,33 @@
+{
+  "name": "pouchdb-authentication",
+  "version": "0.4.0",
+  "description": "Easy authentication plugin for PouchDB/CouchDB",
+  "main": "dist/pouchdb.authentication.js",
+  "homepage": "https://github.com/nolanlawson/pouchdb-authentication",
+  "authors": [
+    "Nolan Lawson <nolan.lawson@gmail.com>"
+  ],
+  "keywords": [
+    "pouchdb",
+    "couchdb",
+    "authentication"
+  ],
+  "license": "Apache 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.0",
+    "commit": "659f1321a82eaa5e0e2033a88f4406de8c74b351"
+  },
+  "_source": "git://github.com/nolanlawson/pouchdb-authentication.git",
+  "_target": "~0.4.0",
+  "_originalSource": "pouchdb-authentication",
+  "_direct": true
+}
