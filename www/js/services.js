@@ -30,6 +30,7 @@ module.factory('Groups', function($http, AuthDB){
     },
 
     signIn:function(user, success){
+      this.signOut()
       console.log('sign in user', user)
       // var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
       AuthDB.login(user.username, user.password).then(function (user) {
@@ -49,6 +50,7 @@ module.factory('Groups', function($http, AuthDB){
 
     signUp: function(user, success){
       //get reference to service in order to call other service
+      this.signOut()
       var self = this;
       console.log('sign up user')
       //sign up new user via dummy db temp_users.  This is required for the signup
@@ -77,6 +79,16 @@ module.factory('Groups', function($http, AuthDB){
         }
       });
      },
+
+    signOut: function(){
+      AuthDB.logout(function(err, response){
+        if(err){
+          console.log("Something went bad when logging out")
+          return;
+        }
+        console.log('just logged out')
+      })
+    },
 
 
     addGroup:function(name){
