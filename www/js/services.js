@@ -1,14 +1,14 @@
 var module = angular.module('starter.services', [])
 
-module.factory('Groups', function($http){
+module.factory('AuthDB', function(){
+  return new PouchDB('http://jakamama.iriscouch.com/temp_users');
+})
+
+
+module.factory('Groups', function($http, AuthDB){
 
   return {
-
     all: function(callback){
-      // return [
-      //   {id:1, name: "decisions-jakamama-jay"},
-      //   {id:2, name: "decisions-STC"}
-      // ]#
       console.log('trying to find 1', this.localGroupsDB)
       this.localGroupsDB.allDocs({include_docs: true}).then(function(docs){
         if(docs.rows.length > 0){
@@ -31,8 +31,8 @@ module.factory('Groups', function($http){
 
     signIn:function(user, success){
       console.log('sign in user', user)
-      var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
-      signInDB.login(user.username, user.password).then(function (user) {
+      // var signInDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');
+      AuthDB.login(user.username, user.password).then(function (user) {
         console.log("I'm user", user);
         console.log('this', this)
         this.user = user;
@@ -53,8 +53,7 @@ module.factory('Groups', function($http){
       console.log('sign up user')
       //sign up new user via dummy db temp_users.  This is required for the signup
       //functionality to have a db to sign up to, in order to create user.
-      var remoteDB = new PouchDB('http://jakamama.iriscouch.com/temp_users');
-      remoteDB.signup(user.username, user.password, function(err, response){
+      AuthDB.signup(user.username, user.password, function(err, response){
         if (err){
           if (err.name === 'conflict') {
             console.log('Username already exists, Error: ', err, response)
