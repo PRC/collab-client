@@ -1,19 +1,25 @@
 <ion-view view-title="Decision">
   <ion-content>
-
-    <div class="list card" ng-repeat="decision in decisions" type="item-text-wrap" href="#/tab/decisions/{{decision.id}}">
-      <div class="item item-divider">{{decision.question}}</div>
-      <div class="item item-body">
-        <div>
-          <label class="item item-input">
-            <span class="input-label">Question</span>
-            <input type="text" ng-model="decision.question">
-          </label>   
-          <button class="button" ng-click="save()">Save</button>
-        </div>
+    <br><br>
+    <div class="list card">
+      <div style="float: left;">
+        <input type="text" placeholder="Question" ng-model="data.question"> 
+      </div>
+      <div style="float: right;">
+        <button class="button" ng-click="addDecision()">Add</button>
       </div>
     </div>
-
+    <div class="list card" ng-repeat="decision in decisions" href="#/tab/decisions/{{decision.id}}">
+      <div style="float: left;">
+        <input type="text" ng-model="decision.question"> 
+      </div>
+      <div style="float: right;">
+        <button class="button" ng-click="updateDecision(decision)">Update</button>
+        <button class="button" ng-click="removeDecision(decision)">Remove</button>
+        <button class="button" ng-click="acceptDecision(decision)">Accept</button>
+        <button class="button" ng-click="rejectDecision(decision)">Reject</button>
+      </div>
+    </div>
     <div class=    
   </ion-content>
 </ion-view>

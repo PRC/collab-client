@@ -30,8 +30,22 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // Each state's controller can be found in controllers.js
   $stateProvider
 
+  //signin state
+  .state('signin', {
+    url: '/sign-in',
+    templateUrl: 'templates/sign-in.html',
+    controller: 'SignInCtrl'
+  })
+
+  //signup state
+  .state('signup', {
+    url: '/sign-up',
+    templateUrl: 'templates/sign-up.html',
+    controller: 'SignInCtrl'
+  })
+
   // setup an abstract state for the tabs directive
-    .state('tab', {
+  .state('tab', {
     url: "/tab",
     abstract: true,
     templateUrl: "templates/tabs.html"
@@ -39,42 +53,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
   // Each tab has its own nav history stack:
 
-  .state('tab.dash', {
-    url: '/dash',
+  .state('tab.groups', {
+    url: '/groups',
     views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
-    }
-  })
-
-  .state('tab.chats', {
-    url: '/chats',
-    views: {
-      'tab-chats': {
-        templateUrl: 'templates/tab-chats.html',
-        controller: 'ChatsCtrl'
-      }
-    }
-  })
-
-  .state('tab.chat-detail', {
-    url: '/chats/:chatId',
-    views: {
-      'tab-chats': {
-        templateUrl: 'templates/chat-detail.html',
-        controller: 'ChatDetailCtrl'
-      }
-    }
-  })
-
-  .state('tab.account', {
-    url: '/account',
-    views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
+      'tab-groups': {
+        templateUrl: 'templates/tab-groups.html',
+        controller: 'GroupsCtrl'
       }
     }
   })
@@ -87,9 +71,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
         controller: 'DecisionsCtrl'
       }
     }
-  });
+  })
+
+  .state('tab.group-detail', {
+    url: '/groups/:groupName',
+    views: {
+      'tab-groups': {
+        templateUrl: 'templates/group-detail.html',
+        controller: 'GroupDetailCtrl'
+      }
+    }
+  })
+
+
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+  $urlRouterProvider.otherwise('/sign-in');
 
 });

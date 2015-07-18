@@ -1,0 +1,40 @@
+<ion-view view-title="Decision">
+  <ion-content>
+
+    <div class="list card" ng-repeat="decision in decisions" type="item-text-wrap" href="#/tab/decisions/{{decision.id}}">
+      <div class="item item-divider"> {{decision.question}} {{ decision.numTrue }}/{{ decision.numAnswers }}</div>
+      <div class="item item-body">
+        <div>
+          <label class="item item-input">
+            <span class="input-label">Question</span>
+            <input type="text" ng-model="decision.question">
+          </label>
+          <label class="item item-input">
+            <span class="input-label">My Answer</span>
+            <input type="text" ng-model="decision.myAnswer">
+          </label>
+          <button class="button" ng-model="decision" ng-click="save({{ $index }})">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="item item-input-inset">
+      <label class="item-input-wrapper">
+        <input type="text" placeholder="New Decision" ng-model="newDecision.question">
+      </label>
+      <button class="button button-small"  ng-click="addDecision()">
+        Add Decision
+      </button>
+    </div>
+
+    <div class="item item-input-inset">
+      <label class="item-input-wrapper">
+        <input type="text" placeholder="New User" ng-model="newUser.name">
+      </label>
+      <button class="button button-small"  ng-click="addUser()">
+        Add User
+      </button>
+    </div>
+ 
+  </ion-content>
+</ion-view>
