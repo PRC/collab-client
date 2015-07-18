@@ -115,7 +115,7 @@ module.factory('Groups', function($http){
         }
         else{
           //When the user has successfully been signed up, call the host to create the users db
-          $http.get('http://localhost:8080/add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
+          $http.get('https://hydro-minister-3539.herokuapp.com/add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
              // this callback will be called asynchronously when the response is available
              console.log('add group request success' + status)
              //signIn using the new user.
@@ -143,7 +143,7 @@ module.factory('Groups', function($http){
 
       //create a new database on remote -need my admin friend to do this so send over deets
       //should use a POST for this but getting cors shit so not doing for meantime
-      $http.get('http://localhost:8080/add_group?name=' + name + '&user=' + this.user.name)
+      $http.get('https://hydro-minister-3539.herokuapp.com/add_group?name=' + name + '&user=' + this.user.name)
 
       //@TODOedit the security document new databse so only this.user can edit"'
     }
