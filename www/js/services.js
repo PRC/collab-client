@@ -21,10 +21,30 @@ module.factory('Admin', function(Util){
   return{
     createUserDb: function(username){
       console.log('username', username)
-      var db = new PouchDB( Util.db + username );
-      console.log('db', db);
-      console.log('db', db);
+      var db = new PouchDB( Util.adminDb + username );
       return db.info()
+    },
+    createGroupDb: function(groupname, username){
+      console.log('username', username)
+      console.log('groupname', groupname)
+      //create the group db
+      var db = new PouchDB( Util.adminDb + groupname );
+      // add group to the users table
+      var userDb = new PouchDB( username );
+
+      userDb.allDocs({include_docs: true}).then(function(docs){
+        console.log('alldocs', docs);
+        console.log('docs.rows[0]', docs.rows[0].doc)
+        
+        var userDoc = docs.rows[0].doc;
+        var groups = userDoc.groups || [];
+        groups.push( { id:'xxx', name: groupname } );
+        return userDb.put({
+          _id: userDoc._id,
+          _rev: userDoc._rev,
+          groups: groups
+        });
+      }.bind(this))
     }
   }
 })
@@ -129,13 +149,14 @@ module.factory('Groups', function($http, AuthDB, Util, Admin){
 
       //create a new database on remote -need my admin friend to do this so send over deets
       //should use a POST for this but getting cors shit so not doing for meantime
-      $http.get(Util.server + 'add_group?name=' + name + '&user=' + this.user.name).
-        success(function(data){
-          console.log('heroku created a group for use ')
-        }).
-        error(function(data){
-          console.log('heroku bailed on creating a group boo ')
-        });
+      Admin.createGroupDb(name, this.user.name);
+      // $http.get(Util.server + 'add_group?name=' + name + '&user=' + this.user.name).
+      //   success(function(data){
+      //     console.log('heroku created a group for use ')
+      //   }).
+      //   error(function(data){
+      //     console.log('heroku bailed on creating a group boo ')
+      //   });
 
       //@TODOedit the security document new databse so only this.user can edit"'
     }
