@@ -3,21 +3,38 @@ var module = angular.module('starter.services', [])
 module.factory('Util', function(){
   var devDb = "http://localhost:5984/";
   var remoteDb ="http://jakamama.iriscouch.com/";
+
+  var devAdminDb = "http://admin:jakamama@localhost:5984/";
+  var remoteAdminDb ="http://admin:jakamama@jakamama.iriscouch.com/";
+
   var devServer = "http://localhost:8080/"
   var remoteServer = "https://hydro-minister-3539.herokuapp.com/"
   return {
     server: devServer,
-    db: devDb
+    db: devDb,
+    adminDb:devAdminDb
   }
 })
 
+
+module.factory('Admin', function(Util){
+  return{
+    createUserDb: function(username){
+      console.log('username', username)
+      var db = new PouchDB( Util.db + username );
+      console.log('db', db);
+      console.log('db', db);
+      return db.info()
+    }
+  }
+})
 
 module.factory('AuthDB', function(Util){
   return new PouchDB(Util.db + 'temp_users');
 })
 
 
-module.factory('Groups', function($http, AuthDB, Util){
+module.factory('Groups', function($http, AuthDB, Util, Admin){
 
   return {
     all: function(callback){
@@ -73,15 +90,22 @@ module.factory('Groups', function($http, AuthDB, Util){
         }
         else{
           //When the user has successfully been signed up, call the host to create the users db
-          $http.get(Util.server + 'add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
-             // this callback will be called asynchronously when the response is available
-             console.log('add group request success' + status)
-             //signIn using the new user.
-             self.signIn(user, success)
-        }).error(function(data, status, headers, config) {
-            // called asynchronously if an error occurs or server returns response with an error status.
-            console.log('add group request failure', headers )
-         });
+          console.log('trying to createUserDb')
+          Admin.createUserDb(user.username).then(function(result){
+            console.log('db has been created with info', result)
+            self.signIn(user, success)
+          }).catch(function(err){
+            console.log('error creating the user database', err)
+          })
+         //  $http.get(Util.server + 'add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
+         //    // this callback will be called asynchronously when the response is available
+         //    console.log('add group request success' + status)
+         //    //signIn using the new user.
+         //    self.signIn(user, success)
+         //  }).error(function(data, status, headers, config) {
+         //    // called asynchronously if an error occurs or server returns response with an error status.
+         //    console.log('add group request failure', headers )
+         // });
         }
       });
      },
