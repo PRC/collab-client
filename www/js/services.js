@@ -1,11 +1,23 @@
 var module = angular.module('starter.services', [])
 
-module.factory('AuthDB', function(){
-  return new PouchDB('http://jakamama.iriscouch.com/temp_users');
+module.factory('Util', function(){
+  var devDb = "http://localhost:5984/";
+  var remoteDb ="http://jakamama.iriscouch.com/";
+  var devServer = "http://localhost:8080/"
+  var remoteServer = "https://hydro-minister-3539.herokuapp.com/"
+  return {
+    server: devServer,
+    db: devDb
+  }
 })
 
 
-module.factory('Groups', function($http, AuthDB){
+module.factory('AuthDB', function(Util){
+  return new PouchDB(Util.db + 'temp_users');
+})
+
+
+module.factory('Groups', function($http, AuthDB, Util){
 
   return {
     all: function(callback){
@@ -29,6 +41,7 @@ module.factory('Groups', function($http, AuthDB){
     },
 
     signIn:function(user, success){
+      console.log('sign in ', Util)
       this.signOut()
       console.log('sign in user', user)
       AuthDB.login(user.username, user.password).then(function (user) {
@@ -36,7 +49,7 @@ module.factory('Groups', function($http, AuthDB){
         console.log('this', this)
         this.user = user;
         this.localGroupsDB = new PouchDB(user.name, {adapter : 'websql'});
-        this.remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + user.name);
+        this.remoteDB = new PouchDB(Util.db + user.name);
         console.log('have localDB', this.localGroupsDB);
         console.log('have remoteDB', this.remoteDB);
         success(user);
@@ -60,7 +73,7 @@ module.factory('Groups', function($http, AuthDB){
         }
         else{
           //When the user has successfully been signed up, call the host to create the users db
-          $http.get('https://hydro-minister-3539.herokuapp.com/add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
+          $http.get(Util.server + 'add_user?name=' + user.username + '&user=' + user.username).success(function(data, status, headers, config) {
              // this callback will be called asynchronously when the response is available
              console.log('add group request success' + status)
              //signIn using the new user.
@@ -92,7 +105,7 @@ module.factory('Groups', function($http, AuthDB){
 
       //create a new database on remote -need my admin friend to do this so send over deets
       //should use a POST for this but getting cors shit so not doing for meantime
-      $http.get('https://hydro-minister-3539.herokuapp.com/add_group?name=' + name + '&user=' + this.user.name).
+      $http.get(Util.server + 'add_group?name=' + name + '&user=' + this.user.name).
         success(function(data){
           console.log('heroku created a group for use ')
         }).
@@ -104,12 +117,12 @@ module.factory('Groups', function($http, AuthDB){
     }
   }
 });
-module.factory('Group', function($http){
+module.factory('Group', function($http, Util){
   var Group = function(name, user){
     this.name = name;
     this.user = user;
     this.localDB = new PouchDB(name, {adapter : 'websql'});
-    this.remoteDB = new PouchDB('http://jakamama.iriscouch.com/' + name);
+    this.remoteDB = new PouchDB(Util.db + name);
     this.localDB.sync(this.remoteDB, { live:true, retry:true } );
   }
   Group.prototype = {
@@ -188,7 +201,7 @@ module.factory('Group', function($http){
 
       //Add the group to the list of groups on the user database
       //@TODO must have connection to internet, how to remove this
-      var userDB = new PouchDB('http://jakamama.iriscouch.com/' + newUser);
+      var userDB = new PouchDB(Util.db + newUser);
       console.log('userDB', userDB);
       userDB.allDocs({include_docs: true}).then(function(docs){
         console.log('alldocs', docs);
@@ -225,13 +238,13 @@ module.factory('Group', function($http){
   return Group;//return group const
 })
 
-module.factory('Decisions', function(){
+module.factory('Decisions', function(Util){
   //init
   var DEBUG = true;
 
   var localDB = new PouchDB('decisions-jakamama', {adapter : 'websql'});//remove adaptrer if testing in firefox
   if(DEBUG){console.log('local DB established', localDB);}
-  var remoteDB = new PouchDB('http://jakamama.iriscouch.com/decisions-jakamama');// remote working
+  var remoteDB = new PouchDB(Util.db + 'decisions-jakamama');// remote working
   if(DEBUG){console.log('remote DB established', remoteDB);}
 
   return {
